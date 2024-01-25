@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Products</title>
+  <link rel="stylesheet" href="styles.css">
+  
+  <style>
+   .product-list {
+      width: 80%;
+      margin: 0 auto;
+    }
+
+    table {
+      width: 50%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      margin: 0 auto;
+      
+      
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 4px; 
+      text-align: left;
+      max-width: 10px; 
+      overflow: hidden;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    th:nth-child(3),
+    td:nth-child(3),
+    th:nth-child(4),
+    td:nth-child(4)
+    th:nth-child(4),
+    td:nth-child(5)
+     {
+      width: 15%; 
+      text-align: center; 
+    }
+
+    th:last-child, td:last-child {
+      text-align: center;
+    }
+
+    img {
+      display: block;
+      width: 100px;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .add-to-cart {
+      background-color: #3dd13d;
+      color: white;
+      padding: 6px 12px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 12px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <img src="file:///C:/Product%20System/.vscode/products/product.jpeg" alt="Product Image">
+    <div style="text-align: center">  
+      <div>
+        <h1>Welcome!<br>
+        Available Products</h1>
+      </div>
+    </div>
+    <div id="productList" class="product-list"></div>
+    <script>
+      const products = [
+      {
+          name: 'Coca Cola ',
+          price: 53.99, 
+          quantity: 1,
+          imageUrl: './products/Coke.jpg'
+        },
+      { name: 'Milk Clover',
+        price: 80.99,
+        quantity: 1,
+        imageUrl: './products/milk.png'  },
+
+      { name: 'Pure Honey',
+        price: 20.99,
+        quantity: 1 ,
+        imageUrl: './products/honey.png'},
+
+      { name: 'Mixed Nuts ',
+        price: 35.99,
+        quantity: 5,
+        imageUrl: './products/nut.jpg' },
+
+      { name: 'Gold Natural Seamoss',
+        price: 60.99,
+        quantity: 1, 
+        imageUrl: './products/seamoss.jpg'},
+
+      { name: 'Basmati rice',
+        price: 90.99,
+        quantity: 1,
+        imageUrl: './products/rice.png' },
+
+      { name: 'Meat',
+        price: 75.55,
+        quantity: 2,
+        imageUrl: './products/meat.jpg'},
+
+      { name: 'Water',
+        price: 99.99,
+        quantity: 8,
+        imageUrl: './products/water.jpg' },
+
+      { name: 'Brown Bread',
+       price: 40.99,
+        quantity: 3,
+        imageUrl: './products/bread.jpg' },
+
+      { name: 'Classic Croissant',
+        price: 55.63,
+        quantity: 1,
+        imageUrl: './products/croissant.jpeg' }
+      ];
+
+      const productList = document.getElementById('productList');
+      const cartKey = 'cartItems';
+      let cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+
+      function addToCart(productName, price) {
+        const productIndex = products.findIndex(item => item.name === productName);
+        const product = products[productIndex];
+
+        if (product.quantity > 0) {
+          const existingProduct = cartItems.find(item => item.productName === productName);
+          if (existingProduct) {
+            // Increment the quantity
+            existingProduct.quantity++;  
+          } else {
+            cartItems.push({ productName, price, quantity: 1 }); // Add new product to cart
+          }
+
+          localStorage.setItem(cartKey, JSON.stringify(cartItems));
+          alert(`Added ${productName} to cart!`);
+          window.location.href = 'cart.html';
+          product.quantity--; // Decrease product quantity
+          renderProducts(); // Update the product list
+        } else {
+          alert('Product not available!');
+        }
+      
+      }
+
+        function renderProducts() {
+        productList.innerHTML = ''; // Clear the product list
+        const table = document.createElement('table');
+        const header = table.createTHead();
+        const headerRow = header.insertRow(0);
+        const headers = ['Product', 'Description', 'Price', 'Quantity', 'Cart'];
+
+        headers.forEach(headerText => {
+        const th = document.createElement('th');
+        th.textContent = headerText;
+        headerRow.appendChild(th);
+      });
+
+      const body = table.createTBody();
+          products.forEach(product => {
+          const row = body.insertRow();
+          const cellImage = row.insertCell(0);
+        const cellName = row.insertCell(1);
+        const cellPrice = row.insertCell(2);
+        const cellQuantity = row.insertCell(3);
+        const cellButton = row.insertCell(4);
+
+
+          cellImage.innerHTML = `<img src="${product.imageUrl}" alt="${product.name}">`;
+          cellName.textContent = product.name;
+          cellPrice.textContent = `R${product.price}`;
+          cellQuantity.textContent = product.quantity;
+          cellButton.innerHTML = `<button class="add-to-cart" onclick="addToCart('${product.name}', ${product.price})">Add to Cart</button>`;
+
+          row.appendChild(cellImage);
+          row.appendChild(cellName);
+          row.appendChild(cellPrice);
+          row.appendChild(cellQuantity);
+          row.appendChild(cellButton);
+
+          table.appendChild(row);
+        });
+
+        productList.appendChild(table);
+      }
+
+      renderProducts(); 
+    </script>
+  </div>
+</body>
+</html>

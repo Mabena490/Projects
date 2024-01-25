@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shopping Cart</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+   .cart-list {
+      width: 40%;
+      margin: 0 auto;
+    }
+
+    .h1 {
+      text-align: center;
+      padding: 6%;
+    }
+
+    table {
+      width: 50%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      margin: 0 auto;
+    }
+    th:nth-child(4),
+    td:nth-child(4),
+    th:nth-child(3),
+    td:nth-child(3)
+    th:nth-child(2),
+    td:nth-child(2)
+     {
+      width: 10%; 
+      text-align: center; 
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th:last-child, td:last-child {
+      text-align: center
+    }
+
+    img {
+      display: block;
+      width: 100px;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .remove-button {
+      background-color: red;
+      color: white;
+      padding: 6px 12px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 12px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .total {
+      font-weight: bold;
+      text-align: right;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align: center">  
+    <div>
+      <h1>Your Cart</h1>
+    </div>
+  </div>
+  <div class="cart-container">  
+    <div id="cartList" class="cart-list"></div>
+    <button id="checkoutButton" style="display: block; margin: 20px auto;">Checkout</button>
+  </div>
+
+  <script>
+    const cartItems = JSON.parse(localStorage.getItem('cartItems'));
+    const cartList = document.getElementById('cartList');
+
+    if (cartItems && cartItems.length > 0) {
+      const table = document.createElement('table');
+      const header = table.createTHead();
+      const headerRow = header.insertRow(0);
+      const headers = [ 'Products', 'Price', 'Quantity', 'Actions']; 
+
+      headers.forEach(headerText => {
+        const th = document.createElement('th');
+        th.textContent = headerText;
+        headerRow.appendChild(th);
+      });
+
+      const body = table.createTBody();
+      let totalPrice = 0;
+
+      cartItems.forEach((item, index) => {
+        const row = body.insertRow();
+        
+        const cellName = row.insertCell(0);
+        const cellPrice = row.insertCell(1);
+        const cellQuantity = row.insertCell(2); 
+        const cellActions = row.insertCell(3); 
+
+        const image = document.createElement('img');
+        
+
+        cellName.textContent = item.productName;
+        cellPrice.textContent = `R${item.price}`;
+        cellQuantity.textContent = item.quantity; 
+
+        // Remove button for each item
+        const removeButton = document.createElement('button');
+        removeButton.textContent = 'Remove';
+        removeButton.classList.add('remove-button');
+        removeButton.onclick = function() {
+          cartItems.splice(index, 1); 
+          localStorage.setItem('cartItems', JSON.stringify(cartItems)); 
+          renderCart(); 
+          location.reload(true);
+        };
+
+        cellActions.appendChild(removeButton);
+        totalPrice += item.price * item.quantity; 
+      });
+
+      const checkoutButton = document.getElementById('checkoutButton');
+
+      checkoutButton.addEventListener('click', function() {
+        
+
+        // Clear the cart and display a pop-up message
+        localStorage.removeItem('cartItems');
+        renderCart();
+        alert('Checkout Successful!');
+      });
+
+      // Total price row
+      const totalRow = table.insertRow();
+      totalRow.classList.add('total');
+      const totalCell = totalRow.insertCell();
+      totalCell.colSpan = 4; 
+      totalCell.textContent = `Total Price: R${totalPrice}`;
+
+      cartList.appendChild(table);
+    } else {
+      const emptyCartMsg = document.createElement('p');
+      emptyCartMsg.textContent = 'Your cart is empty.';
+      cartList.appendChild(emptyCartMsg);
+    }
+    
+    function renderCart() {
+      cartList.innerHTML = '';
+      if (cartItems && cartItems.length > 0) {
+        // Render cart items
+      } else {
+        const emptyCartMsg = document.createElement('p');
+        emptyCartMsg.textContent = 'Your cart is empty.';
+        cartList.appendChild(emptyCartMsg);
+      }
+    }
+  </script>
+</body>
+</html>

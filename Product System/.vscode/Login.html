@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="style.css">
+  <title>Login Form</title>
+</head>
+<body>
+  <div class="container">
+    <img src="file:///C:/Product%20System/.vscode/products/product.jpeg" alt="Product Image">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <label for="username">Username</label><br>
+      <input type="text" id="username" name="username"><br><br>
+      <label for="password">Password</label><br>
+      <input type="password" id="password" name="password"><br><br>
+      <input type="button" id="login" value="Login">
+      <input type="button" onclick="redirectToRegister()" value="Register">
+      
+    </form>
+  </div>
+
+  <script>
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const loginButton = document.getElementById('login');
+
+    loginButton.addEventListener('click', () => {
+      const username = usernameInput.value;
+      const password = passwordInput.value;
+
+      const savedUsername = localStorage.getItem('username');
+      const savedPassword = localStorage.getItem('password');
+
+      if (username && password) {
+        if (username === savedUsername && password === savedPassword) {
+          alert('Login successful! Redirecting to Products page.');
+          window.location.href = 'Products.html';
+        } else {
+          alert('Invalid credentials. Please register.');
+        }
+      } else {
+        alert('Please fill in all fields.');
+      }
+    });
+
+    function redirectToRegister() {
+      window.location.href = "register.html";
+    }
+  </script>
+</body>
+</html>
